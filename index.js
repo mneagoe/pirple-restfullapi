@@ -2,6 +2,7 @@
 const http = require('http');
 const url = require('url');
 const StringDecoder = require('string_decoder').StringDecoder;
+const config = require('./config');
 
 const server = http.createServer((req, res) => {
   // Get the URL and parse interval
@@ -40,7 +41,7 @@ const server = http.createServer((req, res) => {
       queryStringObject,
       method,
       headers,
-      'payload' : buffer
+      'payload': buffer
     }
 
     // Route the request to the handler specified in the router
@@ -67,9 +68,9 @@ const server = http.createServer((req, res) => {
 
 });
 
-// Start the server, and hjave it listen on port 3000
-server.listen(3000, () => {
-  console.log('Server listening on port 3000');
+// Start the server
+server.listen(config.port, () => {
+  console.log(`Server listening on port ${ config.port } in ${ config.envName } mode`);
 });
 
 // Define the handlers
@@ -88,5 +89,5 @@ handlers.notFound = function (data, callback) {
 
 // Define a request router
 let router = {
-  'sample' : handlers.sample
+  'sample': handlers.sample
 }
