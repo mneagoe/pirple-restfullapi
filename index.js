@@ -1,8 +1,9 @@
 // Dependencies
 const http = require('http');
 const url = require('url');
+const StringDecoder = require('string_decoder').StringDecoder;
 
-const server = http.createServer(function (req, res) {
+const server = http.createServer((req, res) => {
 
   // Get the URL and parse interval
   let parsedUrl = url.parse(req.url, true);
@@ -20,15 +21,26 @@ const server = http.createServer(function (req, res) {
   // Get the headers as an object
   let headers = req.headers;
 
-  // Send the response
-  res.end('hola mundo\n');
+  // Get the payload, if any
+  let decoder = new StringDecoder('utf-8');
+  let buffer = '';
 
-  // Log the response path
-  console.log('Request received with these headers: ', headers);
+  req.on('data', (data) => {
+    buffer += decoder.write(data);
+  });
 
+  req.on('end', () => {
+    buffer += decoder.end();
+
+    // Send the response
+    res.end('Hola Mundo\n');
+
+    // Log the response path
+    console.log('Request received with these payload: ', buffer);
+  });
 });
 
 // Start the server, and hjave it listen on port 3000
-server.listen(3000, function () {
+server.listen(3000, () => {
   console.log('Server listening on port 3000');
 });
